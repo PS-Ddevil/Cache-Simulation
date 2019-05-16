@@ -8,10 +8,12 @@
 
 using namespace std;
 
+//Modulus Function
 int mod_val(unsigned int a, int z){
     return a%z;
 }
 
+//Direct Addressing
 int direct(int z, int w){
     int ws = 16*w;
     ifstream fin; 
@@ -27,13 +29,9 @@ int direct(int z, int w){
         ss << std::hex << line;
         ss >> x;  
         x = x/ws;
-        // cout << mod_val(x) << endl;
-        // cout << line << endl;
         if((cache[mod_val(x,z)] == 1) && (data[mod_val(x,z)] == x/ws)){
             hit++;
-            // cout << line << endl;
             cache[mod_val(x,z)] = 1;
-            // data[mod_val(x,z)] = line;
         }else{
             cache[mod_val(x,z)] = 1;
             data[mod_val(x,z)] = x/ws;
@@ -43,18 +41,13 @@ int direct(int z, int w){
     return hit;
 }
 
+//Set Associatin FIFO
 int setassoc_fifo(int z, int w){
     int ws = 16*w;
     ifstream fin; 
     string line;
     fin.open("address.txt");
     std::list<int> *cache = new std::list<int>[z/4];
-    // vector <list <string>> cache;
-    // std::list<int> m[]
-    // cache.resize(z/4);
-    // cout << cache.size();
-    // for(int i = 0; i < z/4; i++)cache[i].resize(4);
-    // for(int i = 0; i < z/4; i++)cout << cache[i].size() << endl;
     int index;
     unsigned int x;
     int hit = 0;
@@ -65,10 +58,6 @@ int setassoc_fifo(int z, int w){
         ss >> x; 
         x = x/ws;
         index = mod_val(x, z/4);
-        // cout << z/4;
-        // cout << line << ' ';
-        // cout << index << ' ';
-        // cout << cache[index].size() << ' '; 
         if(std::find(cache[index].begin(), cache[index].end(), x/ws) != cache[index].end()){
             hit++;
         }else if(cache[index].size() < 4){
@@ -77,24 +66,17 @@ int setassoc_fifo(int z, int w){
             cache[index].pop_back();
             cache[index].push_front(x/ws); 
         }
-        // cout << hit << '\n';
     }
-    // cout << "\n\n";
     return hit;
 }
 
+//Set Association LRU
 int setassoc_lru(int z, int w){
     int ws = 16*w;
     ifstream fin; 
     string line;
     fin.open("address.txt");
     std::list<int> *cache = new std::list<int>[z/4];
-    // vector <list <string>> cache;
-    // std::list<int> m[]
-    // cache.resize(z/4);
-    // cout << cache.size();
-    // for(int i = 0; i < z/4; i++)cache[i].resize(4);
-    // for(int i = 0; i < z/4; i++)cout << cache[i].size() << endl;
     int index;
     unsigned int x;
     int hit = 0;
@@ -105,10 +87,6 @@ int setassoc_lru(int z, int w){
         ss >> x; 
         x = x/ws;
         index = mod_val(x, z/4);
-        // cout << z/4;
-        // cout << line << ' ';
-        // cout << index << ' ';
-        // cout << cache[index].size() << ' '; 
         if(std::find(cache[index].begin(), cache[index].end(), x/ws) != cache[index].end()){
             hit++;
             cache[index].remove(x/ws);
@@ -119,12 +97,11 @@ int setassoc_lru(int z, int w){
             cache[index].pop_back();
             cache[index].push_front(x/ws); 
         }
-        // cout << hit << '\n';
     }
-    // cout << "\n\n";
     return hit;
 }
 
+//Main Function
 int main(){
     int a[8], b[8], c[8], d[8];
     for(int i = 0; i < 3; i++){
